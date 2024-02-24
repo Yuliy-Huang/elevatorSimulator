@@ -45,6 +45,8 @@ class InitFloorPeopleData(object):
             for _ in range(1, random.randint(1, 3)):
                 people = InitPeopleData(i, self.bottom_floor, self.top_floor).to_dict()
                 people_list.append(people)
+
+        # people_list = [InitPeopleData(1, self.bottom_floor, self.top_floor, 0, 0, -1).to_dict()]
         return people_list
 
     def one_person(self, current_floor, is_up=-1, target_floor=0):
