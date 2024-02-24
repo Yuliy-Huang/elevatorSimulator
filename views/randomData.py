@@ -42,7 +42,7 @@ class InitFloorPeopleData(object):
     def several_persons(self):
         people_list = []
         for i in self.called_floors:
-            for _ in range(1, random.randint(1, 3)):
+            for _ in range(1, random.randint(1, 2)):
                 people = InitPeopleData(i, self.bottom_floor, self.top_floor).to_dict()
                 people_list.append(people)
 

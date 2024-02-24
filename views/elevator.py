@@ -8,10 +8,11 @@ class Elevator(object):
         self.bottom_floor = bottom_floor
         self.top_floor = top_floor
         self.current_floor = current_floor
+        self.furthest_target_floor = 0
         self.is_up = 1  # 1: up，0：down
         self.speed = 1  # meter per second
         self.door_open_time = 3  # second, door open and close time
-        self.max_weight = 1000   # kg
+        self.max_weight = 1000  # kg
         self.weight = 0
         self.max_persons = 12
         self.persons = 0
@@ -22,21 +23,35 @@ class Elevator(object):
         self.persons = 0
         self.person_data = pd.DataFrame()
 
+    def get_furthest_target(self):
+        """in the direction of the elevator, get the furthest target floor from the elevator"""
+        print('Elevator: get_furthest_target --- {} self.is_up : {}'.format(self.current_floor, self.is_up))
+        if self.is_up:
+            self.furthest_target_floor = self.person_data['target_floor'].max() if len(self.person_data) > 0 else 0
+            print('Elevator: up get_furthest_target -- self.furthest_target_floor : {}'.format(self.furthest_target_floor))
+        else:
+            self.furthest_target_floor = self.person_data['target_floor'].min() if len(self.person_data) > 0 else 0
+            print('Elevator: down get_furthest_target -- self.furthest_target_floor : {}'.format(self.furthest_target_floor))
+
     def update_elevator_data(self, data, agg='add'):
         """update weight, persons and person_data in the elevator"""
         if agg == 'add':
-            if round(self.weight + data['weight'].sum(), 2) > self.max_weight or self.persons + len(data) > self.max_persons:
+            if round(self.weight + data['weight'].sum(), 2) > self.max_weight or self.persons + len(
+                    data) > self.max_persons:
                 raise Exception('Elevator is overweight')
             self.weight = round(self.weight + data['weight'].sum(), 2)
             self.persons = self.persons + len(data)
             self.person_data = pd.concat([self.person_data, data])
+            self.get_furthest_target()
         elif agg == 'sub':
             self.weight = round(self.weight - data['weight'].sum(), 2)
             self.persons = self.persons - len(data)
             self.person_data.drop(data.index, inplace=True)
+            self.get_furthest_target()
         else:
             raise Exception('Input operator error')
         print('Elevator: update_elevator_data --- done ---self.person_data : ', self.person_data)
+        print('Elevator: -- update_elevator_data -- self.furthest_target_floor : ', self.furthest_target_floor)
 
     def move(self):
         """update current_floor after the elevator starts moving"""
@@ -47,8 +62,7 @@ class Elevator(object):
 
         if not self.current_floor:
             self.current_floor = self.current_floor + 1 if self.is_up else self.current_floor - 1
-
-        time.sleep(self.each_floor_height/self.speed)
+        time.sleep(self.each_floor_height / self.speed)
 
     def door_open_or_close(self):
         time.sleep(self.door_open_time)
@@ -57,18 +71,38 @@ class Elevator(object):
         """the elevator changes direction after it reaches the furthest floor"""
         if self.current_floor == self.top_floor:
             self.is_up = 0
+            print('Elevator: auto_reverse --- top_floor -- self.is_up : ', self.is_up)
         elif self.current_floor == self.bottom_floor:
             self.is_up = 1
-        # elif self.current_floor == furthest_floor:
-        #     self.is_up = 0 if self.is_up else 1
+            print('Elevator: auto_reverse --- bottom_floor -- self.is_up : ', self.is_up)
+        else:
+            self.is_up = 0 if self.is_up else 1
+            print('Elevator: auto_reverse --- reverse ----')
 
-    def whether_reverse(self, target_floor):
+
+    def which_direction(self, furthest_floor, data_not_in):
         """return which direction the elevator should go next"""
-        if self.is_up and target_floor < self.current_floor:
+        is_up = self.is_up
+        most_far = self.furthest_target_floor
+        print('Elevator: --- which_direction 000 --- is_up : ', is_up)
+        if furthest_floor:
+            if self.is_up:
+                most_far = self.furthest_target_floor if self.furthest_target_floor and self.furthest_target_floor > furthest_floor else furthest_floor
+            else:
+                most_far = self.furthest_target_floor if self.furthest_target_floor and self.furthest_target_floor < furthest_floor else furthest_floor
+        print('Elevator: --- which_direction --- most_far : ', most_far)
+        if most_far == 0:
+            self.is_up = 0 if self.is_up else 1
+        elif self.is_up and most_far <= self.current_floor:
             self.is_up = 0
-        elif not self.is_up and target_floor > self.current_floor:
+        elif not self.is_up and most_far >= self.current_floor:
             self.is_up = 1
-
+        print('Elevator: --- which_direction --- self.is_up : ', self.is_up)
+        reverse = False
+        if is_up != self.is_up:
+            self.enter_elevator(data_not_in)
+            reverse = True
+        return reverse
     def get_out_of_elevator(self):
         """get out of the elevator, """
         self.person_data.reset_index(drop=True, inplace=True)
@@ -90,14 +124,12 @@ class Elevator(object):
         data_opposite_direction = elevator_data[elevator_data['is_up'] != self.is_up].copy()
         return data_opposite_direction.to_dict(orient='records')
 
-    def run_elevator(self, target_floor, data):
+    def run_elevator(self, furthest_floor, data):
         """start run elevator, return people who will not enter elevator"""
-        self.auto_reverse()
-        # self.door_open_or_close()  # todo delete
         self.get_out_of_elevator()
         data_not_in = self.enter_elevator(data)
         print('Elevator: --- elevator --- data_not_in : ', data_not_in)
-        self.whether_reverse(target_floor)
-        # self.door_open_or_close()  # todo delete
+        reverse = self.which_direction(furthest_floor, data_not_in)
+        if reverse:
+            data_not_in = []
         return data_not_in
-

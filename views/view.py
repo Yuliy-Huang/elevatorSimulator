@@ -48,8 +48,10 @@ def close_door():
 
 @elevator_blue.route('/start_elevator')
 def start_elevator():
+    generate_person = request.args.get('generate_person', 'yes')
     msg = 'elevator start success'
-    building.set_floor_data()
+    if generate_person == 'yes':
+        building.set_floor_data()
 
     thread = threading.Thread(target=elevator_start)
     thread.start()
