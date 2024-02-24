@@ -13,9 +13,10 @@ elevator = Elevator(bottom, top)
 def elevator_start():
     while True:
         print('------ 当前楼层 ：{}'.format(elevator.current_floor), flush=True)
-        data = building.get_data_by_index(elevator.current_floor)
+        current_floor_data = building.get_data_by_index(elevator.current_floor)
         furthest_floor = building.get_furthest_floor(elevator.current_floor, elevator.is_up)
-        building.update_floor_data(elevator.current_floor, elevator.run_elevator(furthest_floor, data))
+
+        building.update_floor_data(elevator.current_floor, elevator.run_elevator(furthest_floor, current_floor_data))
         print('------ 楼的 floor_data ------', flush=True)
         print(building.floor_data, flush=True)
 

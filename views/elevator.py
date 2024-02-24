@@ -53,14 +53,14 @@ class Elevator(object):
     def door_open_or_close(self):
         time.sleep(self.door_open_time)
 
-    def reverse_when_reached_furthest(self, furthest_floor):
+    def auto_reverse(self):
         """the elevator changes direction after it reaches the furthest floor"""
         if self.current_floor == self.top_floor:
             self.is_up = 0
         elif self.current_floor == self.bottom_floor:
             self.is_up = 1
-        elif self.current_floor == furthest_floor:
-            self.is_up = 0 if self.is_up else 1
+        # elif self.current_floor == furthest_floor:
+        #     self.is_up = 0 if self.is_up else 1
 
     def whether_reverse(self, target_floor):
         """return which direction the elevator should go next"""
@@ -92,12 +92,12 @@ class Elevator(object):
 
     def run_elevator(self, target_floor, data):
         """start run elevator, return people who will not enter elevator"""
-        self.reverse_when_reached_furthest(self.bottom_floor) # todo delete
+        self.auto_reverse()
         # self.door_open_or_close()  # todo delete
         self.get_out_of_elevator()
         data_not_in = self.enter_elevator(data)
         print('Elevator: --- elevator --- data_not_in : ', data_not_in)
-        self.whether_reverse(target_floor)  #todo
+        self.whether_reverse(target_floor)
         # self.door_open_or_close()  # todo delete
         return data_not_in
 

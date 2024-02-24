@@ -51,16 +51,13 @@ class Building(object):
         print('Building: get_furthest_floor --- {} is_up : {}'.format(current_floor, is_up))
         if is_up:
             floor_list = floor_data[floor_data['current_floor'] >= current_floor].sort_values('current_floor', ascending=False)['current_floor'].unique().tolist()
-            floors = [self.top_floor]
             print('Building: up get_furthest_floor -- floor_list : {}'.format(floor_list))
-            print('Building: up get_furthest_floor -- floors : {}'.format(floors))
         else:
             floor_list = floor_data[floor_data['current_floor'] <= current_floor].sort_values('current_floor', ascending=True)['current_floor'].unique().tolist()
-            floors = [self.bottom_floor]
             print('Building: down get_furthest_floor -- floor_list : {}'.format(floor_list))
-            print('Building: down get_furthest_floor -- floors : {}'.format(floors))
-        print('Building: get_furthest_floor -- return : ', (floor_list + floors)[0])
-        return (floor_list + floors)[0]
+        res = floor_list[0] if len(floor_list) > 0 else 0
+        print('Building: get_furthest_floor -- return res : ', res)
+        return res
 
     def update_floor_data(self, floor_index, data):
         """When the elevator arrived, someone will enter the elevator, then the floor_data will be reduced"""
