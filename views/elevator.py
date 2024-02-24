@@ -4,14 +4,13 @@ import time
 
 class Elevator(object):
     def __init__(self, bottom_floor, top_floor, current_floor: int = 1):
-        self.each_floor_height = 3  # meter
+        self.each_floor_height = 5  # meter
         self.bottom_floor = bottom_floor
         self.top_floor = top_floor
         self.current_floor = current_floor
         self.is_up = 1  # 1: up，0：down
         self.speed = 1  # meter per second
         self.door_open_time = 3  # second, door open and close time
-        self.stop_time = 5  # second, the elevator stop time for each floor
         self.max_weight = 1000   # kg
         self.weight = 0
         self.max_persons = 12
@@ -94,12 +93,11 @@ class Elevator(object):
     def run_elevator(self, target_floor, data):
         """start run elevator, return people who will not enter elevator"""
         self.reverse_when_reached_furthest(self.bottom_floor) # todo delete
-        self.door_open_or_close()  # todo delete
+        # self.door_open_or_close()  # todo delete
         self.get_out_of_elevator()
         data_not_in = self.enter_elevator(data)
         print('Elevator: --- elevator --- data_not_in : ', data_not_in)
         self.whether_reverse(target_floor)  #todo
-        time.sleep(self.stop_time)
-        self.door_open_or_close()  # todo delete
+        # self.door_open_or_close()  # todo delete
         return data_not_in
 

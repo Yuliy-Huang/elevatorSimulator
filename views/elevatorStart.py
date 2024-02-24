@@ -19,15 +19,16 @@ def elevator_start():
         print('------ 楼的 floor_data ------', flush=True)
         print(building.floor_data, flush=True)
 
-        if (elevator.is_up and furthest_floor > elevator.current_floor) or (not elevator.is_up and furthest_floor < elevator.current_floor):
-            elevator.move()
-            print('------ move ------', flush=True)
+        # if (elevator.is_up and furthest_floor > elevator.current_floor) or (not elevator.is_up and furthest_floor < elevator.current_floor):
+        #     elevator.move()
+        #     print('------ move ------', flush=True)
 
         if building.is_elevator_pause() and elevator.person_data.empty:
             print('******* break ******** {}'.format(elevator.current_floor), flush=True)
             break
-
-
+        else:
+            elevator.move()
+            print('------ move ------', flush=True)
 
 
 if __name__ == '__main__':
