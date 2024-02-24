@@ -9,7 +9,6 @@ class Building(object):
         self.bottom_floor = bottom_floor
         self.top_floor = top_floor
         self.floor_data = pd.DataFrame(columns=['current_floor', 'weight', 'is_up', 'target_floor'])
-        self.set_floor_data()
 
     def set_floor_data(self):
         data = InitFloorPeopleData(bottom_floor=self.bottom_floor, top_floor=self.top_floor).several_persons()
@@ -29,26 +28,26 @@ class Building(object):
         """if nobody in the building calls the elevator, return True"""
         return self.floor_data.empty
 
-    def get_called_floors(self):
-        """get the floors where somebody called the elevator and the direction"""
-        if self.floor_data.empty:
-            return pd.DataFrame(columns=['current_floor', 'is_up', 'elevator_up_when_open'])
-        floor_data = self.floor_data[['current_floor', 'is_up']].drop_duplicates(subset=['current_floor', 'is_up']).sort_values('current_floor').copy()
-        floor_data['elevator_up_when_open'] = floor_data.apply(
-            lambda x: abs(x[1] - 1) if x[0] == self.top_floor or x[0] == self.bottom_floor else x[1], axis=1)
-        print('Building: get_called_floors --- floor_data : {}'.format(floor_data))
-        return floor_data
-
     def get_data_by_index(self, floor_index):
         """get people data according to the floor index"""
         if not floor_index or floor_index < self.bottom_floor or floor_index > self.top_floor:
             raise Exception('Input floor index error')
         return self.floor_data[self.floor_data['current_floor'] == floor_index].to_dict(orient='records')
 
+    def get_called_floors(self):
+        """get the floors where somebody called the elevator and the direction"""
+        if self.floor_data.empty:
+            return pd.DataFrame(columns=['current_floor', 'is_up', 'elevator_run_direction'])
+        floor_data = self.floor_data[['current_floor', 'is_up']].drop_duplicates(subset=['current_floor', 'is_up']).sort_values('current_floor').copy()
+        floor_data['elevator_run_direction'] = floor_data.apply(
+            lambda x: abs(x[1] - 1) if x[0] == self.top_floor or x[0] == self.bottom_floor else x[1], axis=1)
+        print('Building: get_called_floors --- floor_data : {}'.format(floor_data))
+        return floor_data
+    
     def get_furthest_floor(self, current_floor, is_up=1):
         """in the direction of the elevator, get the furthest called floor from the current floor"""
         floor_data = self.get_called_floors()
-        floor_data = floor_data[floor_data['elevator_up_when_open'] == is_up].copy()
+        floor_data = floor_data[floor_data['elevator_run_direction'] == is_up].copy()
         print('Building: get_furthest_floor --- {} is_up : {}'.format(current_floor, is_up))
         if is_up:
             floor_list = floor_data[floor_data['current_floor'] >= current_floor].sort_values('current_floor', ascending=False)['current_floor'].unique().tolist()
@@ -69,7 +68,8 @@ class Building(object):
         if not floor_index or floor_index < self.bottom_floor or floor_index > self.top_floor:
             raise Exception('Input floor index error')
         print('Building: update_floor_data -- start -- self.floor_data : ', self.floor_data)
-        self.floor_data = self.floor_data[self.floor_data['current_floor'] != floor_index]
+        if len(self.floor_data) > 0:
+            self.floor_data = self.floor_data[self.floor_data['current_floor'] != floor_index]
         self.floor_data = pd.concat([self.floor_data, pd.DataFrame(data)])
         self.floor_data.reset_index(drop=True, inplace=True)
         print('Building: update_floor_data -- done -- self.floor_data : ', self.floor_data)

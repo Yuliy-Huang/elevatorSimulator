@@ -42,17 +42,17 @@ class InitFloorPeopleData(object):
     def several_persons(self):
         people_list = []
         for i in self.called_floors:
-            for _ in range(1, random.randint(1, 5)):
+            for _ in range(1, random.randint(1, 3)):
                 people = InitPeopleData(i, self.bottom_floor, self.top_floor).to_dict()
                 people_list.append(people)
         return people_list
 
-    def one_person(self, current_floor, is_up=-1, weight=0, target_floor=0):
+    def one_person(self, current_floor, is_up=-1, target_floor=0):
         if is_up == -1:
             people_list = [InitPeopleData(current_floor, self.bottom_floor, self.top_floor).to_dict()]
-        elif is_up != -1 and weight and target_floor:
+        elif is_up != -1 and target_floor:
             people_list = [
-                InitPeopleData(current_floor, self.bottom_floor, self.top_floor, is_up, weight, target_floor).to_dict()]
+                InitPeopleData(current_floor, self.bottom_floor, self.top_floor, is_up, 0, target_floor).to_dict()]
         else:
             people_list =[InitPeopleData(current_floor, self.bottom_floor, self.top_floor, is_up).to_dict()]
         return people_list

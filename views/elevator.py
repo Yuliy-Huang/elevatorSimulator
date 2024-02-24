@@ -18,9 +18,13 @@ class Elevator(object):
         self.persons = 0
         self.person_data = pd.DataFrame(columns=['current_floor', 'weight', 'is_up', 'target_floor'])
 
+    def clear_person_data(self):
+        self.weight = 0
+        self.persons = 0
+        self.person_data = pd.DataFrame()
+
     def update_elevator_data(self, data, agg='add'):
         """update weight, persons and person_data in the elevator"""
-        print('Elevator: update_elevator_data --- start ---self.person_data : ', self.person_data)
         if agg == 'add':
             if round(self.weight + data['weight'].sum(), 2) > self.max_weight or self.persons + len(data) > self.max_persons:
                 raise Exception('Elevator is overweight')
@@ -70,9 +74,10 @@ class Elevator(object):
         """get out of the elevator, """
         self.person_data.reset_index(drop=True, inplace=True)
         data = self.person_data.copy()
-        data = data[data['target_floor'] == self.current_floor].copy()
-        print('Elevator: get_out_of_elevator ---- data : ', data)
-        self.update_elevator_data(data, 'sub')
+        if len(data) > 0:
+            data = data[data['target_floor'] == self.current_floor].copy()
+            print('Elevator: get_out_of_elevator ---- data : ', data)
+            self.update_elevator_data(data, 'sub')
 
     def enter_elevator(self, data):
         """enter the elevator, """
@@ -87,15 +92,14 @@ class Elevator(object):
         return data_opposite_direction.to_dict(orient='records')
 
     def run_elevator(self, target_floor, data):
-        """start run elevator, return people who can not enter elevator"""
-        self.reverse_when_reached_furthest(self.bottom_floor)
-        self.door_open_or_close()
+        """start run elevator, return people who will not enter elevator"""
+        self.reverse_when_reached_furthest(self.bottom_floor) # todo delete
+        self.door_open_or_close()  # todo delete
         self.get_out_of_elevator()
         data_not_in = self.enter_elevator(data)
         print('Elevator: --- elevator --- data_not_in : ', data_not_in)
-        self.whether_reverse(target_floor)
+        self.whether_reverse(target_floor)  #todo
         time.sleep(self.stop_time)
-        self.door_open_or_close()
-        self.move()
+        self.door_open_or_close()  # todo delete
         return data_not_in
 
