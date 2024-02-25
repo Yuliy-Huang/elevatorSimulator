@@ -33,7 +33,7 @@ def elevator_info():
 
 @elevator_blue.route('/open_door')
 def open_door():
-    elevator.door_open_or_close()
+    elevator.door_open()
     return make_response(
         {'msg': 'success', 'data': {'persons': elevator.persons, 'current_floor': elevator.current_floor}},
         200)
@@ -41,7 +41,7 @@ def open_door():
 
 @elevator_blue.route('/close_door')
 def close_door():
-    elevator.door_open_or_close()
+    elevator.door_close()
     return make_response(
         {'msg': 'success', 'data': {'persons': elevator.persons, 'current_floor': elevator.current_floor}}, 200)
 

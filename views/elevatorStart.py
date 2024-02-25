@@ -22,16 +22,16 @@ def elevator_start():
         person_not_in = elevator.run_elevator(furthest_floor, current_floor_data)
 
         building.update_floor_data(elevator.current_floor, person_not_in)
-        print('------ 楼的 floor_data ------', flush=True)
+        print('------ 更新后楼的 floor_data ------', flush=True)
         print(building.floor_data, flush=True)
 
         if building.is_elevator_pause() and elevator.person_data.empty:
             elevator.auto_reverse()
-            print('******* break ******** {}'.format(elevator.current_floor), flush=True)
+            print('******* break ******** {}, *** is_up : {}'.format(elevator.current_floor, elevator.is_up), flush=True)
             break
         else:
             elevator.move()
-            print('************** move ***************', flush=True)
+            print('************** move *************** elevator.current_floor: {}'.format(elevator.current_floor), flush=True)
 
 
 if __name__ == '__main__':
