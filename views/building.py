@@ -36,7 +36,7 @@ class Building(object):
         """get people data according to the floor index"""
         if not floor_index or floor_index < self.bottom_floor or floor_index > self.top_floor:
             raise Exception('Input floor index error')
-        return self.floor_data[self.floor_data['current_floor'] == floor_index].to_dict(orient='records')
+        return self.floor_data[self.floor_data['current_floor'] == floor_index].to_dict(orient='records') if len(self.floor_data) > 0 else []
 
     def get_called_floors(self):
         """get the floors where somebody called the elevator and the direction"""

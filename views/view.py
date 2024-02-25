@@ -26,7 +26,7 @@ def elevator_info():
             'is_up': elevator.is_up,
             'persons': elevator.persons,
             'person_data': elevator.person_data.to_dict(orient='records'),
-            'building_floor_data': building.floor_data.sort_values('current_floor').to_dict(orient='records')
+            'building_floor_data': building.floor_data.sort_values('current_floor').to_dict(orient='records') if len(building.floor_data) > 0 else []
         }
     return make_response({'msg': msg, 'data': res}, 200)
 
@@ -61,7 +61,7 @@ def start_elevator():
             'is_up': elevator.is_up,
             'persons': elevator.persons,
             'person_data': elevator.person_data.to_dict(orient='records'),
-            'building_floor_data': building.floor_data.sort_values('current_floor').to_dict(orient='records')
+            'building_floor_data': building.floor_data.sort_values('current_floor').to_dict(orient='records') if len(building.floor_data) > 0 else []
         }}, 200)
 
 
@@ -97,7 +97,7 @@ def call_elevator_inside():
         'is_up': elevator.is_up,
         'persons': elevator.persons,
         'person_data': elevator.person_data.to_dict(orient='records'),
-        'building_floor_data': building.floor_data.sort_values('current_floor').to_dict(orient='records')
+        'building_floor_data': building.floor_data.sort_values('current_floor').to_dict(orient='records') if len(building.floor_data) > 0 else []
     }
     return make_response({'msg': 'success', 'data': res}, 200)
 
@@ -116,6 +116,6 @@ def call_elevator_outside():
         'is_up': elevator.is_up,
         'persons': elevator.persons,
         'person_data': elevator.person_data.to_dict(orient='records'),
-        'building_floor_data': building.floor_data.sort_values('current_floor').to_dict(orient='records')
+        'building_floor_data': building.floor_data.sort_values('current_floor').to_dict(orient='records') if len(building.floor_data) > 0 else []
     }
     return make_response({'msg': 'success', 'data': res}, 200)
