@@ -4,13 +4,13 @@ import time
 
 class Elevator(object):
     def __init__(self, bottom_floor, top_floor, current_floor: int = 1):
-        self.each_floor_height = 5  # meter
+        self.each_floor_height = 2.5  # meter
         self.bottom_floor = bottom_floor
         self.top_floor = top_floor
         self.current_floor = current_floor
         self.furthest_target_floor = 0
         self.is_up = 1  # 1: up，0：down
-        self.speed = 1  # meter per second
+        self.speed = 0.5  # meter per second
         self.door_open_time = 3  # second, door open and close time
         self.max_weight = 1000  # kg
         self.weight = 0
