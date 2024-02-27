@@ -3,13 +3,15 @@ from views.elevatorStart import building, elevator
 from views.building import Building
 from views.elevator import Elevator
 from views.randomData import InitFloorPeopleData
-from views.elevatorStart import elevator_start
+from views.elevatorStart import elevator_start, pause_elevator, restart_elevator
 from views.elevatorStart import top, bottom, elevator, building
 import pandas as pd
 import json
 import threading
 
 elevator_blue = Blueprint('view', __name__)
+
+thread = threading.Thread(target=elevator_start)
 
 
 @elevator_blue.route('/elevator_info')
@@ -33,6 +35,7 @@ def elevator_info():
 
 @elevator_blue.route('/open_door')
 def open_door():
+    pause_elevator()
     elevator.door_open()
     return make_response(
         {'msg': 'success', 'data': {'persons': elevator.persons, 'current_floor': elevator.current_floor}},
@@ -42,6 +45,7 @@ def open_door():
 @elevator_blue.route('/close_door')
 def close_door():
     elevator.door_close()
+    restart_elevator()
     return make_response(
         {'msg': 'success', 'data': {'persons': elevator.persons, 'current_floor': elevator.current_floor}}, 200)
 
@@ -49,14 +53,13 @@ def close_door():
 @elevator_blue.route('/start_elevator')
 def start_elevator():
     generate_person = request.args.get('generate_person', 'yes')
-    msg = 'elevator start success'
     if generate_person == 'yes':
         building.set_floor_data()
 
-    thread = threading.Thread(target=elevator_start)
+    restart_elevator()
     thread.start()
 
-    return make_response({'msg': msg, 'data': {
+    return make_response({'msg': 'Elevator start successfully', 'data': {
             'current_floor': elevator.current_floor,
             'is_up': elevator.is_up,
             'persons': elevator.persons,
@@ -67,10 +70,21 @@ def start_elevator():
 
 @elevator_blue.route('/elevator_pause')
 def elevator_pause():
+    pause_elevator()
+    return make_response(
+        {'msg': 'Elevator pause successfully', 'data':
+            {'persons': elevator.persons, 'current_floor': elevator.current_floor}
+         }, 200)
+
+
+@elevator_blue.route('/elevator_stop')
+def elevator_stop():
     building.clear_floor_data()
     elevator.clear_person_data()
+    restart_elevator()
+    print('************** elevator_stop **************')
     return make_response(
-        {'msg': 'elevator stop success',
+        {'msg': 'Elevator stop successfully',
          'data': {
             'current_floor': elevator.current_floor,
             'is_up': elevator.is_up,

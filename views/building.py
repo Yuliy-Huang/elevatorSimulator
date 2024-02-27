@@ -5,7 +5,7 @@ from views.randomData import InitFloorPeopleData
 class Building(object):
     def __init__(self, bottom_floor: int = -1, top_floor: int = 20):
         """init building"""
-        self.each_floor_height = 3  # meter
+        # self.each_floor_height = 3  # meter
         self.bottom_floor = bottom_floor
         self.top_floor = top_floor
         self.floor_data = pd.DataFrame(columns=['current_floor', 'weight', 'is_up', 'target_floor'])

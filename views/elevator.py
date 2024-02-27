@@ -11,8 +11,7 @@ class Elevator(object):
         self.furthest_target_floor = 0
         self.is_up = 1  # 1: up，0：down
         self.speed = 1  # meter per second
-        self.door_open_time = 12  # second, door open and close time
-        self.door_handle = 0
+        self.door_open_time = 5  # second, door open and close time
         self.max_weight = 1000  # kg
         self.weight = 0
         self.max_persons = 12
@@ -26,15 +25,10 @@ class Elevator(object):
 
     def get_furthest_target(self):
         """in the direction of the elevator, get the furthest target floor from the elevator"""
-        # print('Elevator: get_furthest_target --- {} self.is_up : {}'.format(self.current_floor, self.is_up))
         if self.is_up:
             self.furthest_target_floor = self.person_data['target_floor'].max() if len(self.person_data) > 0 else 0
-            # print('Elevator: up get_furthest_target -- self.furthest_target_floor : {}'.format(
-            #     self.furthest_target_floor))
         else:
             self.furthest_target_floor = self.person_data['target_floor'].min() if len(self.person_data) > 0 else 0
-            # print('Elevator: down get_furthest_target -- self.furthest_target_floor : {}'.format(
-            #     self.furthest_target_floor))
 
     def update_elevator_data(self, data, agg='add'):
         """update weight, persons and person_data in the elevator"""
@@ -68,13 +62,10 @@ class Elevator(object):
         time.sleep(self.each_floor_height / self.speed)
 
     def door_open(self):
-        print('Elevator: ^^^^^^^^^^^^^^ door_open ^^^^^^^^^^^')
         time.sleep(self.door_open_time)
 
     def door_close(self):
-        print('Elevator: ^^^^^^^^^^^^^^ door_close ^^^^^^^^^^^')
         time.sleep(self.door_open_time)
-        self.door_handle = 0
 
     def auto_reverse(self):
         """the elevator changes direction after it reaches the furthest floor"""
@@ -135,10 +126,6 @@ class Elevator(object):
         """start run elevator, return people who will not enter elevator"""
         self.get_out_of_elevator()
         data_not_in = self.enter_elevator(data)
-        print('Elevator: ************* elevator *************- door_handle : ', self.door_handle)
-        if self.door_handle:
-            self.door_open()
-            self.door_close()
         print('Elevator: --- elevator --- data_not_in : ', data_not_in)
         reverse = self.which_direction(furthest_floor, data_not_in)
         if reverse:
