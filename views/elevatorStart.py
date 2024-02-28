@@ -18,7 +18,7 @@ pause_event = threading.Event()
 def elevator_start():
     while True:
         if pause_event.isSet():
-            print("****---- 电梯线程已被暂停 ----****")
+            # print("****---- 电梯线程已被暂停 ----****")
             continue
         print('------ 当前楼层 ：{}'.format(elevator.current_floor), flush=True)
         current_floor_data = building.get_data_by_index(elevator.current_floor)
@@ -38,6 +38,7 @@ def elevator_start():
             print('******* break ******** {}, *** is_up : {}'.format(elevator.current_floor, elevator.is_up), flush=True)
             break
         else:
+            time.sleep(2)
             elevator.move()
             print('************** move *************** elevator.current_floor: {}'.format(elevator.current_floor), flush=True)
 

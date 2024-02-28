@@ -11,7 +11,7 @@ class Elevator(object):
         self.furthest_target_floor = 0
         self.is_up = 1  # 1: up，0：down
         self.speed = 1  # meter per second
-        self.door_open_time = 6  # second, door open and close time
+        self.door_open_time = 5  # second, door open and close time
         self.max_weight = 1000  # kg
         self.weight = 0
         self.max_persons = 12
