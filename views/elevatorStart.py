@@ -1,4 +1,6 @@
 import sys
+import time
+
 sys.path.append('/Users/huangyao/PycharmProjects/elevatorSimulator')
 
 from views.building import Building

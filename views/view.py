@@ -11,8 +11,6 @@ import threading
 
 elevator_blue = Blueprint('view', __name__)
 
-thread = threading.Thread(target=elevator_start)
-
 
 @elevator_blue.route('/elevator_info')
 def elevator_info():
@@ -57,6 +55,7 @@ def start_elevator():
         building.set_floor_data()
 
     restart_elevator()
+    thread = threading.Thread(target=elevator_start)
     thread.start()
 
     return make_response({'msg': 'Elevator start successfully', 'data': {

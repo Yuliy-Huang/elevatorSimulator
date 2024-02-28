@@ -11,7 +11,7 @@ class Elevator(object):
         self.furthest_target_floor = 0
         self.is_up = 1  # 1: up，0：down
         self.speed = 1  # meter per second
-        self.door_open_time = 5  # second, door open and close time
+        self.door_open_time = 6  # second, door open and close time
         self.max_weight = 1000  # kg
         self.weight = 0
         self.max_persons = 12
@@ -91,11 +91,17 @@ class Elevator(object):
                 most_far = self.furthest_target_floor if self.furthest_target_floor and self.furthest_target_floor < furthest_floor else furthest_floor
         # print('Elevator: --- which_direction --- most_far : ', most_far)
         if most_far == 0:
+            time.sleep(self.door_open_time)
             self.is_up = 0 if self.is_up else 1
+            time.sleep(self.door_open_time)
         elif self.is_up and most_far <= self.current_floor:
+            time.sleep(self.door_open_time)
             self.is_up = 0
+            time.sleep(self.door_open_time)
         elif not self.is_up and most_far >= self.current_floor:
+            time.sleep(self.door_open_time)
             self.is_up = 1
+            time.sleep(self.door_open_time)
         # print('Elevator: --- which_direction --- self.is_up : ', self.is_up)
         reverse = False
         if is_up != self.is_up:
